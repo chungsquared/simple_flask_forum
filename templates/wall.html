@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Wall</title>
+</head>
+<body>
+	<h4>Welcome {{session['first_name']}}</h4>
+	<a href="/logout">Logout</a>
+	<form action="/message/{{session['user_id']}}" method='post'>
+		<textarea name="message" id="" cols="30" rows="10"></textarea>
+		<button type='submit'>Post a message</button>
+	</form>
+
+	{% for message in messages %}
+		<h4>{{message['first_name']}} {{message['last_name']}} - {{message['created_at']}}</h4>
+		<p>{{message['message']}}</p>
+		{% for comment in message['fetch_comments'] %}
+			<h4>{{comment['first_name']}} {{comment['last_name']}} - {{comment['comment_created_at']}}</h4>
+			<p>{{comment['comment']}}</p>
+		{% endfor %}
+		<form action="/comment/{{session['user_id']}}/{{message['id']}}" method='post'>
+			<textarea name="comment" id="" cols="30" rows="10"></textarea>
+			<button type='submit'>Post a comment</button>
+		</form>
+		
+	{% endfor %}
+
+</body>
+</html> 
