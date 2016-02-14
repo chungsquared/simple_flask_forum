@@ -8,24 +8,26 @@
 			<th>Name</th>
 			<th>Topic</th>
 			<th>Date Posted</th>
+			<th>Action</th>
 		</tr>
 	</thead>
 	<tbody>
-		<tr>
-			<td>John</td>
-			<td>Cops</td>
-			<td>8/12/15</td>
-		</tr>
-		<tr>
-			<td>Bob</td>
-			<td>Cars</td>
-			<td>8/12/15</td>
-		</tr>
-		<tr>
-			<td>Sam</td>
-			<td>Programming</td>
-			<td>8/12/15</td>
-		</tr>
+		{% for message in messages %}
+			<tr>
+				<th>{{message["first_name"]}}</th>
+				<th><a href="/message/{{message['id']}}">{{message["topic"]}}</a></th>
+				<th>{{message["created_at"]}}</th>
+				
+				<th>
+					<button><a href="/message/{{message['id']}}">View</a></button>
+					{% if message["user_id"] == session["user_id"] %}
+					<button><a href="/message/{{message['id']}}/show">Update</a></button>
+					<button><a href="/message/{{message['id']}}/delete">Delete</a></button>
+					{% endif%}
+				</th>
+				
+			</tr>
+		{% endfor %}
 	</tbody>
 </table>
 

@@ -1,0 +1,11 @@
+{% extends "index.html" %}
+
+{% block body %}
+
+<h4>You are in update.html</h4>
+<form action="/message/{{message['id']}}/update" method="post">
+	Topic Name: <input type="text" name='topic' placeholder="{{message['topic']}}">
+	<textarea name="message" id="" cols="30" rows="10" value="">{{message['message']}}</textarea>
+	<button type='submit' class='btn btn-primary'>Update</button>
+</form>
+{% endblock%}
