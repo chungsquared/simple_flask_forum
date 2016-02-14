@@ -1,11 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Wall</title>
-</head>
-<body>
-	<h4>Welcome {{session['first_name']}}</h4>
+{% extends "index.html" %}
+
+{% block body %}
+	
+
+
+{% endblock %}
+
+
+<!-- 	<h4>Welcome {{session['first_name']}}</h4>
 	<a href="/logout">Logout</a>
 	<form action="/message/{{session['user_id']}}" method='post'>
 		<textarea name="message" id="" cols="30" rows="10"></textarea>
@@ -24,7 +26,4 @@
 			<button type='submit'>Post a comment</button>
 		</form>
 		
-	{% endfor %}
-
-</body>
-</html> 
+	{% endfor %} -->

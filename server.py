@@ -8,8 +8,11 @@ app.secret_key = "ThisIsSecret"
 
 @app.route('/')
 def index():
-	return render_template('index.html')
-
+	if not 'user_id' in session:
+		return render_template('landing.html')
+		
+	else:
+		return render_template('dashboard.html')
 @app.route('/registration', methods=["POST"])
 def reg():
 	user_query = "INSERT INTO users (first_name, last_name, email, password, created_at, updated_at) VALUES ('{}','{}','{}','{}', NOW(), NOW())".format(request.form['first_name'],request.form['last_name'],request.form['email'],request.form['password'])
@@ -27,6 +30,18 @@ def login():
 	else:
 		return redirect('/')
 
+@app.route('/logout')
+def logout():
+	session.clear()
+	return redirect('/')
+
+@app.route('/dashboard')
+def dashboard():
+	get_all_messages_query = "SELECT * FROM messages"
+	all_messages = mysql.fetch(get_all_messages_query)
+	print all_messages
+	return render_template('dashboard.html')
+
 @app.route('/wall')
 def wall():
 	get_messages_query = "SELECT users.first_name, users.last_name, messages.* FROM messages LEFT JOIN users ON messages.user_id = users.id ORDER BY messages.created_at DESC"
@@ -38,10 +53,7 @@ def wall():
 
 	return render_template('wall.html', messages = messages)
 
-@app.route('/logout')
-def logout():
-	session.clear()
-	return redirect('/')
+
 
 @app.route('/message/<user_id>', methods=['POST'])
 def post_message(user_id):
