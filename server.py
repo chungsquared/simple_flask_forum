@@ -1,15 +1,15 @@
 from flask import Flask, render_template, request, redirect, session, flash
 from mysqlconnection import MySQLConnector
 from flask.ext.bcrypt import Bcrypt 
-from flask.ext.login import LoginManager
-from modules import regValidations, functions 
+# from flask.ext.login import LoginManager
+from modules import regValidations 
 import re
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 mysql = MySQLConnector('wall')
-login_manager = LoginManager()
-login_manager.init_app(app)
+# login_manager = LoginManager()
+# login_manager.init_app(app)
 app.secret_key = "ThisIsSecret"
 
 @app.route('/')
