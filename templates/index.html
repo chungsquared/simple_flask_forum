@@ -5,11 +5,10 @@
 	<title>Welcome!</title>
 	<link rel="stylesheet" href="{{ url_for('static', filename = 'lib/bootstrap/css/bootstrap.css')}}">
 	<link rel="stylesheet" href="{{ url_for('static', filename = 'css/stylesheet.css')}}">
-	<script src="{{ url_for('static', filename = 'lib/jquery/jquery.js')}}"></script>
-<script src="{{ url_for('static', filename = 'lib/bootstrap/js/bootstrap.js')}}"></script>
+	
 </head>
 <header>
-	<nav class="navbar navbar-default well">
+	<nav class="navbar navbar-inverse">
 	  <div class="container-fluid">
 	    <!-- Brand and toggle get grouped for better mobile display -->
 	    <div class="navbar-header">
@@ -28,17 +27,7 @@
 	        
 	        <li><a href="/dashboard">Dashboard</a></li>
 	        <li class=""><a href="/message/new">New Topic </a></li>
-	        <li class="dropdown">
-	          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-	          <ul class="dropdown-menu">
-	            <li><a href="#">Action</a></li>
-	            <li><a href="#">Another action</a></li>
-	            <li><a href="#">Something else here</a></li>
-	            <!-- <li role="separator" class="divider"></li> -->
-	            <li><a href="#">Separated link</a></li>
-	            <li><a href="#">One more separated link</a></li>
-	          </ul>
-	        </li>
+			<li><a href="http://www.darrickchung.com">About Me</a></li>
 	      </ul>
 	      <ul class="nav navbar-nav navbar-right">
 	      	{% if session['user_id'] %}
@@ -115,13 +104,14 @@
 </header>
 <body>
 
-<div class='container-fluid'>
-	{% block body %}
+	<div class='container-fluid'>
+		{% block body %}
 
-	{% endblock %}
+		{% endblock %}
 
-</div>
-
+	</div>
+	<script src="{{ url_for('static', filename = 'lib/jquery/jquery.js')}}"></script>
+	<script src="{{ url_for('static', filename = 'lib/bootstrap/js/bootstrap.js')}}"></script>
 
 </body>
 

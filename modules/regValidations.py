@@ -1,13 +1,11 @@
 from mysqlconnection import MySQLConnector 
 import re
 
-
 mysql = MySQLConnector('wall')
 EMAIL_REGEX = re.compile(r'^[a-za-z0-9\.\+_-]+@[a-za-z0-9\._-]+\.[a-za-z]*$')
 
 def validate(info): 
     errors = []
-
     email_exist(info['email'])
     if not info['first_name'] or not info['last_name']:
         errors.append('Name cannot be blank')
