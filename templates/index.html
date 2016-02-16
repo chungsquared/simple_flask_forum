@@ -56,7 +56,16 @@
 	    </div><!-- /.navbar-collapse -->
 	  </div><!-- /.container-fluid -->
 	</nav>
-
+	{% with messages =  get_flashed_messages() %}
+		{% if messages %}
+			{% for message in messages%}
+				<div class="alert alert-warning alert-dismissable" role='alert'>
+					<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
+					{{message}}
+				</div>
+			{% endfor %}
+		{% endif %}
+	{% endwith %}
 	<!-- Login Modal -->
 	<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 	  <div class="modal-dialog" role="document">
@@ -93,6 +102,7 @@
 				Last Name: <input type="text" name='last_name'><br>
 				Email: <input type="text" name='email'><br>
 				Password: <input type="password" name='password'><br>
+				Confirm Password: <input type="password" name='password_confirm'><br>
 				<button type='submit' class='btn btn-primary'>Submit</button>
 			</form>
 	      </div>

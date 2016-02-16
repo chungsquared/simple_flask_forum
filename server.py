@@ -1,34 +1,64 @@
 from flask import Flask, render_template, request, redirect, session, flash
 from mysqlconnection import MySQLConnector
-import re
-from modules import test 
+from flask.ext.bcrypt import Bcrypt 
+from modules import regValidations 
 
 app = Flask(__name__)
+bcrypt = Bcrypt(app)
 mysql = MySQLConnector('wall')
 app.secret_key = "ThisIsSecret"
+
+
 
 @app.route('/')
 def index():
 	if not 'user_id' in session:
 		return render_template('landing.html')
 	else:
+
 		return render_template('dashboard.html')
+
 @app.route('/registration', methods=["POST"])
 def reg():
-	user_query = "INSERT INTO users (first_name, last_name, email, password, created_at, updated_at) VALUES ('{}','{}','{}','{}', NOW(), NOW())".format(request.form['first_name'],request.form['last_name'],request.form['email'],request.form['password'])
-	mysql.run_mysql_query(user_query)
+	reg_info = {
+		'first_name': request.form['first_name'],
+        'last_name': request.form['last_name'],
+        'email': request.form['email'],
+        'password': request.form['password'],
+        'password_confirm': request.form['password_confirm']
+	}
+
+	validate = loginReg.validate(reg_info)
+
+	if validate["status"]:
+		pw_hash = bcrypt.generate_password_hash(reg_info['password'])
+		new_user_query = "INSERT INTO users (first_name, last_name, email, password, created_at, updated_at) VALUES ('{}','{}','{}','{}', NOW(), NOW())".format(reg_info['first_name'],reg_info['last_name'],reg_info['email'],pw_hash)
+		mysql.run_mysql_query(new_user_query)
+		flash("You have successfully registered")
+
+	else:
+		for error in validate['errors']:
+			flash(error)
+
 	return redirect('/')
 
 @app.route('/login', methods=["POST"])
 def login():
-	check_user_query = "SELECT * FROM users WHERE users.email = '{}'".format(request.form['email'])
-	user_info = mysql.fetch(check_user_query)
-	if user_info[0]['password'] == request.form['password']:
-		session['first_name'] = user_info[0]['first_name']
-		session['user_id'] = user_info[0]['id']
+	# login_check = loginReg.login_authen(request.form['email'],request.form['password'])
+	user_query = "SELECT * FROM users WHERE email = '{}' LIMIT 1".format(request.form['email'])
+	user = mysql.fetch(user_query)
+	if user == []:
+		flash("The email inputted does not match our records. Please try again")
+
+	elif bcrypt.check_password_hash(user[0]['password'],request.form['password']):
+		session['first_name'] = user[0]['first_name']
+		session['user_id'] = user[0]['id']
 		return redirect('/dashboard')
+
 	else:
-		return redirect('/')
+		flash("Incorrect Password")
+
+	return redirect('/')
 
 @app.route('/logout')
 def logout():
@@ -48,9 +78,7 @@ def message_wall(message_id):
 
 	get_comments_query = "SELECT users.first_name, users.last_name, comments.id AS comment_id, comments.user_id AS comment_user_id, comments.comment, comments.created_at AS comment_created_at FROM comments LEFT JOIN users ON comments.user_id = users.id LEFT JOIN messages ON comments.message_id = messages.id WHERE comments.message_id='{}' ORDER BY comment_created_at ASC".format(message[0]['id'])
 	comments = mysql.fetch(get_comments_query)
-	print comments
 	message[0]['fetch_comments'] = comments
-	print message
 	return render_template('wall.html', message = message)
 
 @app.route('/message/new')
