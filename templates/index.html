@@ -2,8 +2,11 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Login | Registraiton</title>
+	<title>Welcome!</title>
 	<link rel="stylesheet" href="{{ url_for('static', filename = 'lib/bootstrap/css/bootstrap.css')}}">
+	<link rel="stylesheet" href="{{ url_for('static', filename = 'css/stylesheet.css')}}">
+	<script src="{{ url_for('static', filename = 'lib/jquery/jquery.js')}}"></script>
+<script src="{{ url_for('static', filename = 'lib/bootstrap/js/bootstrap.js')}}"></script>
 </head>
 <header>
 	<nav class="navbar navbar-default well">
@@ -16,14 +19,15 @@
 	        <span class="icon-bar"></span>
 	        <span class="icon-bar"></span>
 	      </button>
-	      <a class="navbar-brand" href="#">Darrick's Forum</a>
+	      <a class="navbar-brand" href="#">Darrick's Awesome Forum</a>
 	    </div>
 
 	    <!-- Collect the nav links, forms, and other content for toggling -->
 	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 	      <ul class="nav navbar-nav">
-	        <li class=""><a href="/logout">Logout </a></li>
-	        <li><a href="/wall1">Dashboard</a></li>
+	        
+	        <li><a href="/dashboard">Dashboard</a></li>
+	        <li class=""><a href="/message/new">New Topic </a></li>
 	        <li class="dropdown">
 	          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
 	          <ul class="dropdown-menu">
@@ -37,12 +41,17 @@
 	        </li>
 	      </ul>
 	      <ul class="nav navbar-nav navbar-right">
-	        <li>
-	        	<a class="" href='#' data-toggle="modal" data-target="#loginModal">Login</a>
-	        </li>
-			<li>
-	        	<a class="" href='#' data-toggle="modal" data-target="#regModal">Register</a>
-	        </li>
+	      	{% if session['user_id'] %}
+	      		<li><a href="">Welcome, {{session['first_name']}}</a></li>
+	      		<li><a href="/logout">Logout</a></li>
+	        {% else %}
+	        	<li>
+		        	<a class="" href='#' data-toggle="modal" data-target="#loginModal">Login</a>
+		        </li>
+				<li>
+		        	<a class="" href='#' data-toggle="modal" data-target="#regModal">Register</a>
+		        </li>
+	        {% endif %}
 	      </ul>
 	    </div><!-- /.navbar-collapse -->
 	  </div><!-- /.container-fluid -->
@@ -96,15 +105,14 @@
 </header>
 <body>
 
-<div class='container-fluid' align='center'>
+<div class='container-fluid'>
 	{% block body %}
 
 	{% endblock %}
 
 </div>
 
-<script src="{{ url_for('static', filename = 'lib/jquery/jquery.js')}}"></script>
-<script src="{{ url_for('static', filename = 'lib/bootstrap/js/bootstrap.js')}}"></script>
+
 </body>
 
 </html>

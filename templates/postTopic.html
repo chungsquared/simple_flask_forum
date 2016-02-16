@@ -1,0 +1,14 @@
+{% extends "index.html" %}
+
+{% block body %}
+
+<h2>Post a new topic!</h2>
+<form action="/message/{{session['user_id']}}" method='post'>
+	<p>Topic: </p><input type="text" name='topic' placeholder='Topic Name'><br>
+	<p>Text: </p>
+	<textarea name="message" id="" cols="50" rows="5"></textarea><br>
+	<button type='submit'>Post a topic</button>
+</form>
+		
+
+{% endblock %}

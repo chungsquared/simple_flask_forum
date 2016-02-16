@@ -39,7 +39,6 @@ def logout():
 def dashboard():
 	get_all_messages_query = "SELECT users.first_name, users.last_name, messages.* FROM messages LEFT JOIN users ON messages.user_id = users.id ORDER BY messages.created_at DESC"
 	all_messages = mysql.fetch(get_all_messages_query)
-	print all_messages
 	return render_template('dashboard.html', messages =  all_messages)
 
 @app.route('/message/<message_id>')
@@ -47,16 +46,22 @@ def message_wall(message_id):
 	get_message_query = "SELECT users.first_name, users.last_name, messages.* FROM messages LEFT JOIN users ON messages.user_id = users.id WHERE messages.id = '{}'".format(message_id)
 	message = mysql.fetch(get_message_query)
 
-	get_comments_query = "SELECT users.first_name, users.last_name, comments.comment, comments.created_at AS comment_created_at FROM comments LEFT JOIN users ON comments.user_id = users.id LEFT JOIN messages ON comments.message_id = messages.id WHERE comments.message_id='{}' ORDER BY comment_created_at ASC".format(message[0]['id'])
+	get_comments_query = "SELECT users.first_name, users.last_name, comments.id AS comment_id, comments.user_id AS comment_user_id, comments.comment, comments.created_at AS comment_created_at FROM comments LEFT JOIN users ON comments.user_id = users.id LEFT JOIN messages ON comments.message_id = messages.id WHERE comments.message_id='{}' ORDER BY comment_created_at ASC".format(message[0]['id'])
 	comments = mysql.fetch(get_comments_query)
+	print comments
 	message[0]['fetch_comments'] = comments
+	print message
 	return render_template('wall.html', message = message)
+
+@app.route('/message/new')
+def new_message():
+	return render_template('postTopic.html')
 
 @app.route('/message/<user_id>', methods=['POST'])
 def post_message(user_id):
-	post_message_query = "INSERT INTO messages (user_id,message,created_at,updated_at) VALUES ('{}', '{}', NOW(), NOW())".format(user_id, request.form['message'])
+	post_message_query = "INSERT INTO messages (user_id,message,topic,created_at,updated_at) VALUES ('{}', '{}', '{}', NOW(), NOW())".format(user_id, re.escape(request.form['message']),re.escape(request.form['topic']))
 	mysql.run_mysql_query(post_message_query)
-	return redirect('/wall')
+	return redirect('/dashboard')
 
 @app.route('/message/<message_id>/show')
 def show_message(message_id):
@@ -66,7 +71,7 @@ def show_message(message_id):
 
 @app.route('/message/<message_id>/update', methods=["POST"])
 def update_message(message_id):
-	update_message_query = "UPDATE `wall`.`messages` SET `message`='{}', `topic`='{}'  WHERE `id`='{}'".format(request.form['message'],request.form['topic'], message_id)
+	update_message_query = "UPDATE `wall`.`messages` SET `message`='{}', `topic`='{}'  WHERE `id`='{}'".format(re.escape(request.form['message']),re.escape(request.form['topic']), message_id)
 	mysql.run_mysql_query(update_message_query)
 	return redirect('dashboard')
 
@@ -74,14 +79,19 @@ def update_message(message_id):
 def delete_message(message_id):
 	delete_message_query = "DELETE FROM `wall`.`messages` WHERE `id`='{}'".format(message_id)
 	mysql.run_mysql_query(delete_message_query)
-	return redirect('dashboard.html')
-
+	return redirect('/dashboard')
 
 @app.route('/comment/<user_id>/<message_id>', methods=["POST"])
 def post_comment(user_id,message_id):
-	post_comment_query = "INSERT INTO comments (message_id, user_id, comment, created_at, updated_at) VALUES ('{}','{}','{}', NOW(), NOW())".format(message_id, user_id, request.form['comment'])
+	post_comment_query = "INSERT INTO comments (message_id, user_id, comment, created_at, updated_at) VALUES ('{}','{}','{}', NOW(), NOW())".format(message_id, user_id, re.escape(request.form['comment']))
 	mysql.run_mysql_query(post_comment_query)
-	return redirect('/wall')
+	return redirect('/message/'+message_id)
+
+@app.route('/comment/<comment_id>/<message_id>/delete')
+def delete_comment(comment_id, message_id):
+	delete_comment_query = "DELETE FROM `wall`.`comments` WHERE `id`='{}'".format(comment_id)
+	mysql.run_mysql_query(delete_comment_query)
+	return redirect('/message/' + message_id)
 
 app.run(debug=True)
 

@@ -1,0 +1,12 @@
+#message{
+	background-color: lightgray;
+	padding-left:2em;
+}
+
+#comments{
+	background-color: lightblue;
+	padding-left:6em;
+}
+#post-comment{
+	padding-left: 6em;
+}

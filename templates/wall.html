@@ -1,29 +1,31 @@
 {% extends "index.html" %}
 
 {% block body %}
-	
 	{% for message in message %}
-		<h4>{{message['first_name']}} {{message['last_name']}} - Posted {{message['created_at']}}</h4>
-		<p>{{message['message']}}</p>
+		<div id='message' class='row'>
+			<h2>{{message['first_name']}} {{message['last_name']}} posted:</h2>
+			<p>{{message['created_at']}}</p>
+			<h4>{{message['message']}}</h4>
+		</div>
+		<div id="comments" class='row'>
+		<h2>Comments:</h2>
 		{% for comment in message['fetch_comments'] %}
-			<h4>{{comment['first_name']}} {{comment['last_name']}} - Commented {{comment['comment_created_at']}}</h4>
-			<p>{{comment['comment']}}</p>
+			<h4>{{comment['first_name']}} {{comment['last_name']}} replied:</h4>
+			<p>{{comment['comment_created_at']}}</p>
+			<h4>{{comment['comment']}}</h4>
+			{% if comment['comment_user_id'] == session['user_id']%}
+				<button type='submit' class='btn btn-danger'><a href="/comment/{{comment['comment_id']}}/{{message['id']}}/delete">Delete Comment</a></button>
+			{% endif%}
 		{% endfor %}
-		<form action="/comment/{{session['user_id']}}/{{message['id']}}" method='post'>
-			<textarea name="comment" id="" cols="30" rows="10"></textarea>
-			<button type='submit' class='btn btn-success'>Post a comment</button>
-		</form>
-		
+		</div>
+		<div id="post-comment" >
+			<form action="/comment/{{session['user_id']}}/{{message['id']}}" method='post'>
+				<textarea name="comment" id="" cols="60" rows="5" placeholder="Reply to {{message['first_name']}}'s post here"></textarea>
+				<button type='submit' class='btn btn-success'>Submit</button>
+			</form>
+		</div>
+		<script src="{{ url_for('static', filename = 'js/updateComment.js')}}"></script>
 	{% endfor %}
-
 {% endblock %}
 
 
-<!-- 	<h4>Welcome {{session['first_name']}}</h4>
-	<a href="/logout">Logout</a>
-	<form action="/message/{{session['user_id']}}" method='post'>
-		<textarea name="message" id="" cols="30" rows="10"></textarea>
-		<button type='submit'>Post a message</button>
-	</form>
-
- -->
